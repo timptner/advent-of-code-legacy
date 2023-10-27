@@ -6,7 +6,11 @@ import unittest
 from year2022.day01 import get_max_calories, get_top3_calories_total
 from year2022.day02 import get_score
 from year2022.day03 import get_priority_sum, get_priority_sum_grouped
-from year2022.day04 import get_amount_fully_contained, get_amount_partly_contained
+from year2022.day04 import (
+    get_amount_fully_contained,
+    get_amount_partly_contained,
+)
+from year2022.day05 import reorder_crates
 
 
 class TestYear2022(unittest.TestCase):
@@ -25,6 +29,10 @@ class TestYear2022(unittest.TestCase):
     def test_day04(self):
         self.assertEqual(get_amount_fully_contained(), 2)
         self.assertEqual(get_amount_partly_contained(), 4)
+
+    def test_day05(self):
+        self.assertEqual(reorder_crates(version=9000), 'CMZ')
+        self.assertEqual(reorder_crates(version=9001), 'MCD')
 
 
 if __name__ == '__main__':
