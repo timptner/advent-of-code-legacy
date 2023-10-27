@@ -11,6 +11,7 @@ from year2022.day04 import (
     get_amount_partly_contained,
 )
 from year2022.day05 import reorder_crates
+from year2022.day06 import handle_messages
 
 
 class TestYear2022(unittest.TestCase):
@@ -33,6 +34,10 @@ class TestYear2022(unittest.TestCase):
     def test_day05(self):
         self.assertEqual(reorder_crates(version=9000), 'CMZ')
         self.assertEqual(reorder_crates(version=9001), 'MCD')
+
+    def test_day06(self):
+        self.assertEqual(handle_messages(4), [7, 5, 6, 10, 11])
+        self.assertEqual(handle_messages(14), [19, 23, 23, 29, 26])
 
 
 if __name__ == '__main__':
