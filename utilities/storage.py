@@ -34,5 +34,6 @@ def read_data(year: int, day: int) -> str:
         print(file)
         raise FileNotFoundError(f"Please download {name} data first!")
 
-    content = file.read_text().strip()
+    content = file.read_text()
+
     return content
