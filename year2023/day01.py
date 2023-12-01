@@ -81,7 +81,7 @@ def main() -> None:
 
     data = storage.read_data(year, day, 'prod')
     total = get_numbers_ext(data)
-    print(f"Part 1: {total}")
+    print(f"Part 2: {total}")
 
 
 if __name__ == '__main__':
