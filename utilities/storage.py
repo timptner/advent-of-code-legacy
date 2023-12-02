@@ -12,7 +12,7 @@ def read_data(year: int, day: int, name: str = 'prod') -> str:
     if day not in range(1, 26):
         raise ValueError("Invalid day.")
 
-    file = DATA_DIR / str(year) / f'{day:02d}' / f'{name}.txt'
+    file = DATA_DIR / str(year) / f'{day:02d}' / name
 
     if not file.exists():
         raise FileNotFoundError(f"Please download {name} data for {year}-{day} first!")
