@@ -1,43 +1,53 @@
-#! /usr/bin/env python3
-
 from utilities.storage import read_data
 
 
-def main() -> None:
-    data = read_data(2023, 4, 'prod')
-
+def get_matched_numbers(data: str) -> dict:
     cards = {}
-    card_wins = {}
     for line in data.splitlines():
         card, numbers = line.split(':')
         card = int(card.removeprefix('Card '))
 
-        numbers = [number.strip() for number in numbers.split('|')]
-        numbers1 = {int(number) for number in numbers[0].split()}
-        numbers2 = {int(number) for number in numbers[1].split()}
-        winning_numbers = numbers1 & numbers2
-        wins = len(winning_numbers)
-        card_wins[card] = wins
-        if wins > 0:
-            card_points = 2 ** (wins - 1)
-        else:
-            card_points = 0
-        cards[card] = card_points
-    print(f"Part 1: {sum(cards.values())}")
+        game_numbers, winning_numbers = numbers.split('|')
+        game_numbers = {int(number) for number in game_numbers.strip().split()}
+        winning_numbers = {int(number) for number in winning_numbers.strip().split()}
 
-    total_cards = {card: 1 for card, points in card_wins.items()}
-    for card, points in card_wins.items():
-        amount = total_cards[card]
-        for _ in range(amount):
-            for index in range(points):
+        matched_numbers = game_numbers & winning_numbers
+        cards[card] = matched_numbers
+    return cards
+
+
+def first_part(data: str) -> int:
+    cards = get_matched_numbers(data)
+    points_per_card = {}
+    for card, numbers in cards.items():
+        count = len(numbers)
+        if count > 0:
+            points = 2 ** (count - 1)
+        else:
+            points = 0
+        points_per_card[card] = points
+    return sum(points_per_card.values())
+
+
+def second_part(data: str) -> int:
+    cards = get_matched_numbers(data)
+    counts = {card: len(numbers) for card, numbers in cards.items()}
+    card_counts = {card: 1 for card, count in counts.items()}
+    for card, count in counts.items():
+        for _ in range(card_counts[card]):
+            for index in range(count):
                 try:
-                    total_cards[card + index + 1] += 1
+                    card_counts[card + index + 1] += 1
                 except KeyError:
                     continue
-        # print(card, total_cards)
-    # print(total_cards)
-    print(f"Part 2: {sum(total_cards.values())}")
+    return sum(card_counts.values())
 
 
-if __name__ == '__main__':
-    main()
+def main() -> None:
+    data = read_data(2023, 4, 'prod.txt')
+
+    first_answer = first_part(data)
+    print(f"Part 1: {first_answer}")
+
+    second_answer = second_part(data)
+    print(f"Part 2: {second_answer}")
