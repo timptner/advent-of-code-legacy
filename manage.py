@@ -45,6 +45,18 @@ def solve(args) -> None:
     print(f"Part 2: {answer} ({get_human_delta(delta)})")
 
 
+def validate_test_result(result: unittest.TestResult, year: int, day: int, part: int) -> None:
+    msg = f"Test for part {part} of year {year} day {day}"
+    if result.wasSuccessful():
+        print(f"{msg} was successful")
+    else:
+        for test_case, failure in result.failures:
+            print(failure)
+        for test_case, error in result.errors:
+            print(error)
+        print(f"{msg} failed")
+
+
 def test(args) -> None:
     try:
         module = import_module(f'tests.year{args.year}')
@@ -58,20 +70,15 @@ def test(args) -> None:
         print(f"No test case for puzzle year {args.year} day {args.day}")
         exit()
 
-    suite = unittest.TestSuite()
     result = unittest.TestResult()
-
     test_first_part = cls('test_first_part')
-    test_second_part = cls('test_second_part')
+    test_first_part.run(result=result)
+    validate_test_result(result, args.year, args.day, 1)
 
-    suite.addTests([test_first_part, test_second_part])
-    suite.run(result=result)
-    if not result.wasSuccessful():
-        result.printErrors()
-        print(result.failures)
-        print("Tests failed!")
-    else:
-        print("Tests passed!")
+    result = unittest.TestResult()
+    test_second_part = cls('test_second_part')
+    test_second_part.run(result=result)
+    validate_test_result(result, args.year, args.day, 2)
 
 
 def main() -> None:
