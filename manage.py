@@ -6,6 +6,7 @@ import unittest
 from argparse import ArgumentParser
 from importlib import import_module
 
+from utilities.console import stdout, stderr, print_title
 from utilities.storage import read_data
 
 
@@ -24,50 +25,51 @@ def measure_execution_time(func, *args, **kwargs) -> (int, float):
 
 def get_human_delta(delta: float) -> str:
     if delta < 1:
-        return f"{delta * 1e3:.3f} ms"
+        return f"{delta * 1e3:.1f} ms"
     else:
-        return f"{delta:.3f} s"
+        return f"{delta:.1f} s"
 
 
 def solve(args) -> None:
+    print_title(stdout, f"Year {args.year} Day {args.day}")
     try:
         module = import_module(f'year{args.year}.day{args.day:02d}')
     except ModuleNotFoundError:
-        print(f"No solution for puzzle year {args.year} day {args.day}")
+        stderr.print(f"No solution for puzzle year {args.year} day {args.day}")
         exit()
 
     data = read_data(args.year, args.day, 'prod.txt')
 
     answer, delta = measure_execution_time(module.first_part, data=data)
-    print(f"Part 1: {answer} ({get_human_delta(delta)})")
+    stdout.print(f"Part 1: {answer} ({get_human_delta(delta)})")
 
     answer, delta = measure_execution_time(module.second_part, data=data)
-    print(f"Part 2: {answer} ({get_human_delta(delta)})")
+    stdout.print(f"Part 2: {answer} ({get_human_delta(delta)})")
 
 
 def validate_test_result(result: unittest.TestResult, year: int, day: int, part: int) -> None:
     msg = f"Test for part {part} of year {year} day {day}"
     if result.wasSuccessful():
-        print(f"{msg} was successful")
+        stdout.print(f"{msg} was successful")
     else:
         for test_case, failure in result.failures:
-            print(failure)
+            stderr.print(failure)
         for test_case, error in result.errors:
-            print(error)
-        print(f"{msg} failed")
+            stderr.print(error)
+        stderr.print(f"{msg} failed")
 
 
 def test(args) -> None:
     try:
         module = import_module(f'tests.year{args.year}')
     except ModuleNotFoundError:
-        print(f"No tests for puzzle year {args.year}")
+        stderr.print(f"No tests for puzzle year {args.year}")
         exit()
 
     try:
         cls = getattr(module, f'TestDay{args.day:02d}')
     except AttributeError:
-        print(f"No test case for puzzle year {args.year} day {args.day}")
+        stderr.print(f"No test case for puzzle year {args.year} day {args.day}")
         exit()
 
     result = unittest.TestResult()
