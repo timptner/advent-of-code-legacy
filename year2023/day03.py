@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-
 from utilities.storage import read_data
 
 DIGITS = [str(digit) for digit in range(10)]
@@ -24,60 +22,75 @@ def plot(data, width, row, column, number):
         print(_line)
 
 
-def main() -> None:
-    data = read_data(2023, 3, 'prod')
-    data = [list(line) for line in data.splitlines()]
-
-    numbers = {}
+def get_symbol_positions(grid: list[list]) -> dict:
     symbols = {}
-    for row, line in enumerate(data):
+    for row, line in enumerate(grid):
+        for column, character in enumerate(line):
+            if character not in [*DIGITS, '.']:
+                symbols[(row, column)] = character
+    return symbols
+
+
+def get_number_positions(grid: list[list]) -> dict:
+    numbers = {}
+    for row, line in enumerate(grid):
         digits = []
-        for column, char in enumerate(line):
-            if char in DIGITS:
-                digits.append(char)
-                if column == len(line) - 1:
-                    start = column - len(digits)
-                    numbers[(row, start)] = int(''.join(digits))
-                continue
-            else:
+        for column, characters in enumerate(line):
+            if characters not in [*DIGITS, '.']:
                 if digits:
                     start = column - len(digits)
                     numbers[(row, start)] = int(''.join(digits))
                     digits = []
-            if char == '.':
                 continue
-            else:
-                symbols[(row, column)] = char
-    # print(numbers)
-    # print(symbols)
 
-    points_of_interests = set()
-    for pointer, number in numbers.items():
-        row, column = pointer
+            digits.append(characters)
+            if column == len(line) - 1:
+                start = column - len(digits)
+                numbers[(row, start)] = int(''.join(digits))
+            continue
+    return numbers
+
+
+def get_points_of_interest(numbers: dict, symbols: dict) -> set:
+    points_of_interest = set()
+    for position, number in numbers.items():
+        row, column = position
         width = len(str(number))
         for local_row in range(row - 1, row + 2):
             for local_column in range(column - 1, column + width + 1):
-                local_pointer = (local_row, local_column)
-                if local_pointer in symbols.keys():
-                    points_of_interests.add(pointer)
-        # if pointer not in points_of_interests:
-        #     plot(data, width, row, column, number)
-    # print(points_of_interests)
+                local_position = (local_row, local_column)
+                if local_position in symbols.keys():
+                    points_of_interest.add(position)
+    return points_of_interest
 
+
+def get_numbers_of_interest(numbers: dict, positions: set) -> list:
     numbers_of_interest = []
-    for pointer in points_of_interests:
-        number = numbers[pointer]
+    for position in positions:
+        number = numbers[position]
         numbers_of_interest.append(number)
-    # print(numbers_of_interest)
+    return numbers_of_interest
 
-    print(f"Part 1: {sum(numbers_of_interest)}")
 
+def first_part(data: str) -> int:
+    grid = [list(line) for line in data.splitlines()]
+    numbers = get_number_positions(grid)
+    symbols = get_symbol_positions(grid)
+    points_of_interest = get_points_of_interest(numbers, symbols)
+    numbers_of_interest = get_numbers_of_interest(numbers, points_of_interest)
+    return sum(numbers_of_interest)
+
+
+def second_part(data: str) -> int:
+    grid = [list(line) for line in data.splitlines()]
+    numbers = get_number_positions(grid)
+    symbols = get_symbol_positions(grid)
     total = 0
-    for pointer, symbol in symbols.items():
-        numbers_with_gears = set()
-        local_row, local_column = pointer
+    for position, symbol in symbols.items():
+        local_row, local_column = position
         if symbol != '*':
             continue
+        numbers_with_gears = set()
         for row in range(local_row - 1, local_row + 2):
             for column in range(local_column - 1, local_column + 2):
                 value = data[row][column]
@@ -89,8 +102,14 @@ def main() -> None:
             x = list(numbers_with_gears)
             product = numbers[x[0]] * numbers[x[1]]
             total += product
-    print(f"Part 2: {total}")
+    return total
 
 
-if __name__ == '__main__':
-    main()
+def main() -> None:
+    data = read_data(2023, 3, 'prod.txt')
+
+    first_answer = first_part(data)
+    print(f"Part 1: {first_answer}")
+
+    second_answer = second_part(data)
+    print(f"Part 2: {second_answer}")

@@ -1,6 +1,31 @@
 from unittest import TestCase
 
-from year2023.day04 import first_part, second_part
+from year2023 import day03, day04
+
+
+class TestDay03(TestCase):
+    def setUp(self) -> None:
+        data = """
+467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..
+"""
+        self.data = data.strip()
+
+    def test_first_part(self) -> None:
+        answer = day03.first_part(self.data)
+        self.assertEqual(answer, 4361)
+
+    def test_second_part(self) -> None:
+        answer = day03.second_part(self.data)
+        self.assertEqual(answer, 467835)
 
 
 class TestDay04(TestCase):
@@ -16,9 +41,9 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11
         self.data = data.strip()
 
     def test_first_part(self) -> None:
-        answer = first_part(self.data)
+        answer = day04.first_part(self.data)
         self.assertEqual(answer, 13)
 
     def test_second_part(self) -> None:
-        answer = second_part(self.data)
+        answer = day04.second_part(self.data)
         self.assertEqual(answer, 30)
