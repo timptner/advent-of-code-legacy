@@ -5,7 +5,7 @@ import unittest
 from argparse import ArgumentParser
 
 from tests import year2023
-from year2023 import day03, day04
+from year2023 import day03, day04, day05
 
 
 def main() -> None:
@@ -24,6 +24,7 @@ def main() -> None:
             2023: {
                 3: year2023.TestDay03,
                 4: year2023.TestDay04,
+                5: year2023.TestDay05,
             },
         }
         cls = tests[year][day]
@@ -37,6 +38,8 @@ def main() -> None:
         suite.addTests([test_first_part, test_second_part])
         suite.run(result=result)
         if not result.wasSuccessful():
+            result.printErrors()
+            print(result.failures)
             print("Tests failed!")
         else:
             print("Tests passed!")
@@ -46,6 +49,7 @@ def main() -> None:
             2023: {
                 3: day03,
                 4: day04,
+                5: day05,
             },
         }
         func = solutions[year][day]
