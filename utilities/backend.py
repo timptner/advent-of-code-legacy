@@ -5,12 +5,16 @@ from urllib.parse import urljoin
 
 import requests
 
+from utilities.decorators import cache, rate_limit
+
 BASE_DIR = Path(__file__).parent.parent
 
 ENDPOINT = 'https://adventofcode.com'
 
 
-def _get_puzzle_input(year: int, day: int) -> str:
+@cache
+@rate_limit(seconds=900)
+def get_puzzle_input(*, year: int, day: int) -> str:
     url = urljoin(ENDPOINT, f'{year}/day/{day}/input')
     session = os.environ['AOC_SESSION']
     headers = {

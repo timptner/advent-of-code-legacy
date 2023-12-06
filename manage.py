@@ -5,9 +5,10 @@ import unittest
 from argparse import ArgumentParser
 from importlib import import_module
 
+from utilities.backend import get_puzzle_input
 from utilities.console import console, print_title
-from utilities.storage import load_dotenv, read_puzzle_input
-from utilities.statistics import measure_execution_time, get_human_delta
+from utilities.decorators import measure_time
+from utilities.storage import load_dotenv
 
 
 def test(year: int, day: int, part: int) -> unittest.TestResult:
@@ -37,7 +38,7 @@ def solve(args) -> None:
         console.print("Solution for this puzzle is missing", style='red')
         return
 
-    data = read_puzzle_input(args.year, args.day)
+    data = get_puzzle_input(year=args.year, day=args.day)
 
     for part in range(1, 3):
         console.rule(f"Part {part}")
@@ -68,9 +69,9 @@ def solve(args) -> None:
             2: module.second_part,
         }
         func = func_parts[part]
-        answer, delta = measure_execution_time(func, data=data)
-        console.print(f"Answer: {answer}")
-        console.print(f"Duration: {get_human_delta(delta)}")
+        timed_func = measure_time(func)
+        value = timed_func(data)
+        console.print(f"Answer: {value}")
 
 
 def test_all(args) -> None:
