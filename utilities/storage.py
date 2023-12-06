@@ -2,21 +2,25 @@ import os
 
 from pathlib import Path
 
-DATA_DIR = Path(__file__).parent.parent / 'data'
+from .backend import _get_puzzle_input
+
+BASE_DIR = Path(__file__).parent.parent
 
 
-def read_data(year: int, day: int, name: str = 'prod') -> str:
-    if year not in range(2015, 2024):
-        raise ValueError("Invalid year.")
+def load_dotenv() -> None:
+    path = BASE_DIR / '.env'
+    content = path.read_text()
+    for line in content.splitlines():
+        key, value = line.split('=', maxsplit=1)
+        if key == 'AOC_SESSION':
+            os.environ[key] = value
 
-    if day not in range(1, 26):
-        raise ValueError("Invalid day.")
 
-    file = DATA_DIR / str(year) / f'{day:02d}' / name
-
-    if not file.exists():
-        raise FileNotFoundError(f"Please download {name} data for {year}-{day} first!")
-
-    content = file.read_text()
-
+def read_puzzle_input(year: int, day: int) -> str:
+    path = BASE_DIR / 'data' / str(year) / f'{day:02d}.txt'
+    if path.exists():
+        content = path.read_text()
+    else:
+        content = _get_puzzle_input(year, day)
+        path.write_text(content)
     return content

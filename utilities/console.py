@@ -1,13 +1,13 @@
-from rich import box
+from rich.align import Align
 from rich.console import Console
 from rich.padding import Padding
 from rich.panel import Panel
 
-stdout = Console()
-stderr = Console(stderr=True, style='bold red')
+console = Console()
 
 
-def print_title(console: Console, title: str):
-    panel = Panel.fit(title, box=box.ROUNDED, style='green')
-    padding = Padding(panel, (1, 5))
+def print_title(text: str):
+    panel = Panel.fit(f"[bold magenta]{text}", title='[blue]Advent of Code', style='green')
+    align = Align.center(panel)
+    padding = Padding(align, 2)
     console.print(padding)
