@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from year2023 import day03, day04, day05
+from year2023 import day03, day04, day05, day06
 
 
 class TestDay03(TestCase):
@@ -95,3 +95,20 @@ humidity-to-location map:
     def test_second_part(self) -> None:
         answer = day05.second_part(self.data)
         self.assertEqual(answer, 46)
+
+
+class TestDay06(TestCase):
+    def setUp(self) -> None:
+        data = """
+Time:      7  15   30
+Distance:  9  40  200
+"""
+        self.data = data.strip()
+
+    def test_first_part(self) -> None:
+        answer = day06.first_part(self.data)
+        self.assertEqual(answer, 288)
+
+    def test_second_part(self) -> None:
+        answer = day06.second_part(self.data)
+        self.assertEqual(answer, 71503)
