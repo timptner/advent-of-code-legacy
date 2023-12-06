@@ -1,6 +1,3 @@
-from utilities import storage
-
-
 def filter_digits(chars: list) -> list:
     digits = []
     for char in chars:
@@ -71,18 +68,11 @@ def get_numbers_ext(data: str) -> int:
     return total
 
 
-def main() -> None:
-    year = 2023
-    day = 1
-
-    data = storage.read_data(year, day, 'prod')
+def first_part(data: str) -> int:
     total = get_numbers(data)
-    print(f"Part 1: {total}")
+    return total
 
-    data = storage.read_data(year, day, 'prod')
+
+def second_part(data: str) -> int:
     total = get_numbers_ext(data)
-    print(f"Part 2: {total}")
-
-
-if __name__ == '__main__':
-    main()
+    return total

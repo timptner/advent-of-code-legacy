@@ -2,8 +2,6 @@ import time
 
 import numpy as np
 
-from utilities.storage import read_data
-
 Rule = tuple[range, range]  # source, destination
 
 
@@ -109,21 +107,3 @@ def second_part(data: str) -> int:
             if seed in seed_range:
                 print(number)
                 return number
-
-
-def main() -> None:
-    data = read_data(2023, 5, 'prod.txt')
-
-    first_answer = first_part(data)
-    print(f"Part 1: {first_answer}")
-
-    second_answer = second_part(data)
-    print(f"Part 1: {second_answer}")
-
-
-if __name__ == '__main__':
-    from tests import year2023
-    test = year2023.TestDay05()
-    test.setUp()
-    print(first_part(test.data))
-    print(second_part(test.data))

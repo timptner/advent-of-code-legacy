@@ -1,6 +1,3 @@
-from utilities.storage import read_data
-
-
 def get_matched_numbers(data: str) -> dict:
     cards = {}
     for line in data.splitlines():
@@ -41,13 +38,3 @@ def second_part(data: str) -> int:
                 except KeyError:
                     continue
     return sum(card_counts.values())
-
-
-def main() -> None:
-    data = read_data(2023, 4, 'prod.txt')
-
-    first_answer = first_part(data)
-    print(f"Part 1: {first_answer}")
-
-    second_answer = second_part(data)
-    print(f"Part 2: {second_answer}")

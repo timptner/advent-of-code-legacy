@@ -1,5 +1,3 @@
-from utilities.storage import read_data
-
 DIGITS = [str(digit) for digit in range(10)]
 
 
@@ -103,13 +101,3 @@ def second_part(data: str) -> int:
             product = numbers[x[0]] * numbers[x[1]]
             total += product
     return total
-
-
-def main() -> None:
-    data = read_data(2023, 3, 'prod.txt')
-
-    first_answer = first_part(data)
-    print(f"Part 1: {first_answer}")
-
-    second_answer = second_part(data)
-    print(f"Part 2: {second_answer}")

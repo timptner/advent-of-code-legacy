@@ -1,15 +1,9 @@
-#! /usr/bin/env python3
-
-from utilities.storage import read_data
-
-
-def main() -> None:
+def main(data: str) -> (int, int):
     valid = {
         'red': 12,
         'green': 13,
         'blue': 14,
     }
-    data = read_data(2023, 2, 'prod')
     invalid_games = set()
     power_list = []
     lines = data.splitlines()
@@ -41,9 +35,12 @@ def main() -> None:
         power_list.append(power)
     games = set(range(1, len(lines) + 1))
     valid_games = games - invalid_games
-    print(sum(valid_games))
-    print(sum(power_list))
+    return sum(valid_games), sum(power_list)
 
 
-if __name__ == '__main__':
-    main()
+def first_part(data: str) -> int:
+    return main(data)[0]
+
+
+def second_part(data: str) -> int:
+    return main(data)[1]
