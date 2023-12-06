@@ -18,6 +18,8 @@ def load_dotenv() -> None:
 
 def read_puzzle_input(year: int, day: int) -> str:
     path = BASE_DIR / 'data' / str(year) / f'{day:02d}.txt'
+    if not path.parent.exists():
+        path.parent.mkdir(parents=True)
     if path.exists():
         content = path.read_text()
     else:
