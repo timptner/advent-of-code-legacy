@@ -1,6 +1,55 @@
 from unittest import TestCase
 
-from year2023 import day03, day04, day05, day06
+from year2023 import day01, day02, day03, day04, day05, day06
+
+
+class TestDay01(TestCase):
+    def setUp(self) -> None:
+        data1 = """
+1abc2
+pqr3stu8vwx
+a1b2c3d4e5f
+treb7uchet
+"""
+        self.data1 = data1.strip()
+        data2 = """
+two1nine
+eightwothree
+abcone2threexyz
+xtwone3four
+4nineeightseven2
+zoneight234
+7pqrstsixteen
+"""
+        self.data2 = data2.strip()
+
+    def test_first_part(self) -> None:
+        answer = day01.first_part(self.data1)
+        self.assertEqual(answer, 142)
+
+    def test_second_part(self) -> None:
+        answer = day01.second_part(self.data2)
+        self.assertEqual(answer, 281)
+
+
+class TestDay02(TestCase):
+    def setUp(self) -> None:
+        data = """
+Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
+"""
+        self.data = data.strip()
+
+    def test_first_part(self) -> None:
+        answer = day02.first_part(self.data)
+        self.assertEqual(answer, 8)
+
+    def test_second_part(self) -> None:
+        answer = day02.second_part(self.data)
+        self.assertEqual(answer, 2286)
 
 
 class TestDay03(TestCase):
