@@ -10,7 +10,14 @@ def measure_execution_time(func, *args, **kwargs) -> (int, float):
 
 
 def get_human_delta(delta: float) -> str:
-    if delta < 1:
-        return f"{delta * 1e3:.1f} ms"
+    if delta < 1e-3:
+        msg = f"{delta * 1e6:.1f} µs"
+    elif delta < 1:
+        msg = f"{delta * 1e3:.1f} ms"
+    elif delta < 60:
+        msg = f"{delta:.1f} s"
+    elif delta < 60**2:
+        msg = f"{delta / 60:.1f} min"
     else:
-        return f"{delta:.1f} s"
+        msg = f"{delta / 60:.1f} h"
+    return msg
