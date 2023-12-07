@@ -3,7 +3,7 @@ from rich.console import Console
 from rich.padding import Padding
 from rich.panel import Panel
 
-console = Console()
+console = Console(stderr=True)
 
 
 def print_title(text: str):

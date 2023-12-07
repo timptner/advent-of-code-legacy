@@ -2,6 +2,7 @@ import time
 
 from functools import wraps, partial, update_wrapper
 
+from utilities.console import console
 from utilities.storage import BASE_DIR
 
 
@@ -28,7 +29,7 @@ def measure_time(func):
         stop = time.perf_counter_ns()
         delta = stop - start
         human_delta = _get_human_delta(delta)
-        print(f"Finished '{func.__name__}' in {human_delta}")
+        console.print(f"Finished '{func.__name__}' in {human_delta}")
         return value
 
     return wrapper

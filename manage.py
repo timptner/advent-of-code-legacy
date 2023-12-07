@@ -3,10 +3,11 @@
 import unittest
 
 from argparse import ArgumentParser
+from datetime import date
 from importlib import import_module
 
 from utilities.backend import get_puzzle_input
-from utilities.console import console, print_title
+from utilities.console import console
 from utilities.decorators import measure_time
 from utilities.storage import load_dotenv
 
@@ -30,7 +31,7 @@ def test(year: int, day: int, part: int) -> unittest.TestResult:
 
 
 def solve(args) -> None:
-    print_title(f"Year {args.year}, Day {args.day}")
+    console.print(f"Solving puzzle for year {args.year} day {args.day}")
 
     try:
         module = import_module(f'year{args.year}.day{args.day:02d}')
@@ -41,29 +42,29 @@ def solve(args) -> None:
     data = get_puzzle_input(year=args.year, day=args.day)
 
     for part in range(1, 3):
-        console.rule(f"Part {part}")
+        console.print(f"Trying part {part}")
+        if not args.skip_test:
+            try:
+                test_result = test(args.year, args.day, part)
+            except ModuleNotFoundError:
+                console.print("Test module for this year is missing", style='red')
+                return
+            except AttributeError:
+                console.print("Test case for this puzzle is missing", style='red')
+                return
 
-        try:
-            test_result = test(args.year, args.day, part)
-        except ModuleNotFoundError:
-            console.print("Test module for this year is missing", style='red')
-            return
-        except AttributeError:
-            console.print("Test case for this puzzle is missing", style='red')
-            return
+            if not test_result.wasSuccessful():
+                for test_case, failure in test_result.failures:
+                    console.print(f"Test execution [red]failed")
+                    console.print(failure)
 
-        if not test_result.wasSuccessful():
-            console.print(f"Test: [red]FAILED")
+                for test_case, error in test_result.errors:
+                    console.print(error)
+                    console.print(f"Run into an [red]error[/red] while running test")
 
-            for test_case, failure in test_result.failures:
-                console.print(failure)
+                continue
 
-            for test_case, error in test_result.errors:
-                console.print(error)
-
-            continue
-
-        console.print("Test: [green]PASSED")
+            console.print("Test was [green]passed")
         func_parts = {
             1: module.first_part,
             2: module.second_part,
@@ -97,14 +98,16 @@ def test_all(args) -> None:
 
 def main() -> None:
     load_dotenv()
+    today = date.today()
 
     parser = ArgumentParser()
 
     subparsers = parser.add_subparsers(title="Available commands")
 
     parser_solve = subparsers.add_parser('solve', help="Solve puzzle for specific year and day")
-    parser_solve.add_argument('year', type=int, choices=range(2016, 2024), help="Year of event")
-    parser_solve.add_argument('day', type=int, choices=range(1, 26), help="Day of advent")
+    parser_solve.add_argument('--year', type=int, choices=range(2016, 2024), default=today.year, help="Year of event")
+    parser_solve.add_argument('--day', type=int, choices=range(1, 26), default=today.day, help="Day of advent")
+    parser_solve.add_argument('--skip-test', action='store_true')
     parser_solve.set_defaults(func=solve)
 
     parser_test = subparsers.add_parser('test', help="Test all available puzzle")
