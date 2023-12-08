@@ -39,8 +39,6 @@ def solve(args) -> None:
         console.print("Solution for this puzzle is missing", style='red')
         return
 
-    data = get_puzzle_input(year=args.year, day=args.day)
-
     for part in range(1, 3):
         console.print(f"Trying part {part}")
         if not args.skip_test:
@@ -70,6 +68,7 @@ def solve(args) -> None:
             2: module.second_part,
         }
         func = func_parts[part]
+        data = get_puzzle_input(year=args.year, day=args.day)
         timed_func = measure_time(func)
         value = timed_func(data)
         console.print(f"Answer: {value}")
