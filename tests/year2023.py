@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from year2023 import day01, day02, day03, day04, day05, day06, day07
+from year2023 import day01, day02, day03, day04, day05, day06, day07, day08
 
 
 class TestDay01(TestCase):
@@ -181,3 +181,54 @@ QQQJA 483
     def test_second_part(self) -> None:
         value = day07.second_part(self.data)
         self.assertEqual(value, 5905)
+
+
+class TestDay08(TestCase):
+    def setUp(self) -> None:
+        data1 = """
+RL
+
+AAA = (BBB, CCC)
+BBB = (DDD, EEE)
+CCC = (ZZZ, GGG)
+DDD = (DDD, DDD)
+EEE = (EEE, EEE)
+GGG = (GGG, GGG)
+ZZZ = (ZZZ, ZZZ)
+"""
+        self.data1 = data1.strip()
+        data2 = """
+LLR
+
+AAA = (BBB, BBB)
+BBB = (AAA, ZZZ)
+ZZZ = (ZZZ, ZZZ)
+"""
+        self.data2 = data2.strip()
+        data3 = """
+LR
+
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)
+"""
+        self.data3 = data3.strip()
+
+    def test_first_part(self) -> None:
+        value = day08.first_part(self.data1)
+        self.assertEqual(value, 2)
+        value = day08.first_part(self.data2)
+        self.assertEqual(value, 6)
+
+    def test_second_part(self) -> None:
+        # value = day08.second_part(self.data1)
+        # self.assertEqual(value, 0)
+        # value = day08.second_part(self.data2)
+        # self.assertEqual(value, 0)
+        value = day08.second_part(self.data3)
+        self.assertEqual(value, 6)
