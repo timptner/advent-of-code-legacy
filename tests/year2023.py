@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from year2023 import day01, day02, day03, day04, day05, day06, day07, day08
+from year2023 import (day01, day02, day03, day04, day05, day06, day07, day08,
+                      day09)
 
 
 class TestDay01(TestCase):
@@ -226,9 +227,23 @@ XXX = (XXX, XXX)
         self.assertEqual(value, 6)
 
     def test_second_part(self) -> None:
-        # value = day08.second_part(self.data1)
-        # self.assertEqual(value, 0)
-        # value = day08.second_part(self.data2)
-        # self.assertEqual(value, 0)
         value = day08.second_part(self.data3)
         self.assertEqual(value, 6)
+
+
+class TestDay09(TestCase):
+    def setUp(self) -> None:
+        data = """
+0 3 6 9 12 15
+1 3 6 10 15 21
+10 13 16 21 30 45
+"""
+        self.data = data.strip()
+
+    def test_first_part(self) -> None:
+        value = day09.first_part(self.data)
+        self.assertEqual(value, 114)
+
+    def test_second_part(self) -> None:
+        value = day09.second_part(self.data)
+        self.assertEqual(value, 2)
