@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from year2023 import (day01, day02, day03, day04, day05, day06, day07, day08,
-                      day09)
+                      day09, day10)
 
 
 class TestDay01(TestCase):
@@ -247,3 +247,90 @@ class TestDay09(TestCase):
     def test_second_part(self) -> None:
         value = day09.second_part(self.data)
         self.assertEqual(value, 2)
+
+
+class TestDay10(TestCase):
+    def setUp(self) -> None:
+        data1 = """
+.....
+.S-7.
+.|.|.
+.L-J.
+.....
+"""
+        self.data1 = data1.strip()
+        data2 = """
+7-F7-
+.FJ|7
+SJLL7
+|F--J
+LJ.LJ
+"""
+        self.data2 = data2.strip()
+        data3 = """
+...........
+.S-------7.
+.|F-----7|.
+.||.....||.
+.||.....||.
+.|L-7.F-J|.
+.|..|.|..|.
+.L--J.L--J.
+...........
+"""
+        self.data3 = data3.strip()
+        data4 = """
+.F----7F7F7F7F-7....
+.|F--7||||||||FJ....
+.||.FJ||||||||L7....
+FJL7L7LJLJ||LJ.L-7..
+L--J.L7...LJS7F-7L7.
+....F-J..F7FJ|L7L7L7
+....L7.F7||L7|.L7L7|
+.....|FJLJ|FJ|F7|.LJ
+....FJL-7.||.||||...
+....L---J.LJ.LJLJ...
+"""
+        self.data4 = data4.strip()
+        data5 = """
+FF7FSF7F7F7F7F7F---7
+L|LJ||||||||||||F--J
+FL-7LJLJ||||||LJL-77
+F--JF--7||LJLJ7F7FJ-
+L---JF-JLJ.||-FJLJJ7
+|F|F-JF---7F7-L7L|7|
+|FFJF7L7F-JF7|JL---7
+7-L-JL7||F7|L7F-7F7|
+L.L7LFJ|||||FJL7||LJ
+L7JLJL-JLJLJL--JLJ.L
+"""
+        self.data5 = data5.strip()
+        data6 = """
+FF7FSF7F7F7F7F7F---7
+L|LJ||||||||||||F--J
+FL-7LJLJ||||||LJL-77
+F--JF--7||LJLJIF7FJ-
+L---JF-JLJIIIIFJLJJ7
+|F|F-JF---7IIIL7L|7|
+|FFJF7L7F-JF7IIL---7
+7-L-JL7||F7|L7F-7F7|
+L.L7LFJ|||||FJL7||LJ
+L7JLJL-JLJLJL--JLJ.L
+"""
+        self.data6 = data6.strip()
+
+    def test_first_part(self) -> None:
+        value = day10.first_part(self.data1)
+        self.assertEqual(value, 4)
+        value = day10.first_part(self.data2)
+        self.assertEqual(value, 8)
+
+    def test_second_part(self) -> None:
+        value = day10.second_part(self.data3)
+        self.assertEqual(value, 4)
+        value = day10.second_part(self.data4)
+        self.assertEqual(value, 8)
+        value = day10.second_part(self.data5)
+        self.assertEqual(value, 0)
+        value = day10.second_part(self.data6)
+        self.assertEqual(value, 10)
