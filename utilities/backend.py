@@ -81,6 +81,8 @@ class BasePuzzle:
         print(f"Solution for part {part}: {value}")
 
     def solve(self) -> None:
+        padding = '-' * 10
+        print(f"{padding} {self.name} ({self.year}/{self.day}) {padding}")
         self._test_part(1)
         self._solve_part(1)
 
