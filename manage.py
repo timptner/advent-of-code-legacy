@@ -5,10 +5,9 @@ import unittest
 from argparse import ArgumentParser
 from datetime import date
 from importlib import import_module
+from pathlib import Path
 
-from utilities.backend import get_puzzle_input
 from utilities.console import console
-from utilities.decorators import measure_time
 from utilities.storage import load_dotenv
 
 
@@ -31,47 +30,20 @@ def test(year: int, day: int, part: int) -> unittest.TestResult:
 
 
 def solve(args) -> None:
-    console.print(f"Solving puzzle for year {args.year} day {args.day}")
+    module_path: Path = args.module
+    if not module_path.exists():
+        raise FileNotFoundError("Module with puzzle solution does not exist")
+
+    module_name = str(module_path).removesuffix('.py').replace('/', '.')
 
     try:
-        module = import_module(f'year{args.year}.day{args.day:02d}')
+        module = import_module(module_name)
     except ModuleNotFoundError:
-        console.print("Solution for this puzzle is missing", style='red')
+        print("Solution for this puzzle is missing")
         return
 
-    for part in range(1, 3):
-        console.print(f"Trying part {part}")
-        if not args.skip_test:
-            try:
-                test_result = test(args.year, args.day, part)
-            except ModuleNotFoundError:
-                console.print("Test module for this year is missing", style='red')
-                return
-            except AttributeError:
-                console.print("Test case for this puzzle is missing", style='red')
-                return
-
-            if not test_result.wasSuccessful():
-                for test_case, failure in test_result.failures:
-                    console.print(f"Test execution [red]failed")
-                    console.print(failure)
-
-                for test_case, error in test_result.errors:
-                    console.print(error)
-                    console.print(f"Run into an [red]error[/red] while running test")
-
-                continue
-
-            console.print("Test was [green]passed")
-        func_parts = {
-            1: module.first_part,
-            2: module.second_part,
-        }
-        func = func_parts[part]
-        data = get_puzzle_input(year=args.year, day=args.day)
-        timed_func = measure_time(func)
-        value = timed_func(data)
-        console.print(f"Answer: {value}")
+    puzzle = module.Puzzle()
+    puzzle.solve()
 
 
 def test_all(args) -> None:
@@ -103,10 +75,8 @@ def main() -> None:
 
     subparsers = parser.add_subparsers(title="Available commands")
 
-    parser_solve = subparsers.add_parser('solve', help="Solve puzzle for specific year and day")
-    parser_solve.add_argument('--year', type=int, choices=range(2016, 2024), default=today.year, help="Year of event")
-    parser_solve.add_argument('--day', type=int, choices=range(1, 26), default=today.day, help="Day of advent")
-    parser_solve.add_argument('--skip-test', action='store_true')
+    parser_solve = subparsers.add_parser('solve', help="Solve specific puzzle")
+    parser_solve.add_argument('module', type=Path, default=f'year{today.year}/day{today.day:02d}.py', help="Path to module containing puzzle")
     parser_solve.set_defaults(func=solve)
 
     parser_test = subparsers.add_parser('test', help="Test all available puzzle")

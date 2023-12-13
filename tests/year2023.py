@@ -231,24 +231,6 @@ XXX = (XXX, XXX)
         self.assertEqual(value, 6)
 
 
-class TestDay09(TestCase):
-    def setUp(self) -> None:
-        data = """
-0 3 6 9 12 15
-1 3 6 10 15 21
-10 13 16 21 30 45
-"""
-        self.data = data.strip()
-
-    def test_first_part(self) -> None:
-        value = day09.first_part(self.data)
-        self.assertEqual(value, 114)
-
-    def test_second_part(self) -> None:
-        value = day09.second_part(self.data)
-        self.assertEqual(value, 2)
-
-
 class TestDay10(TestCase):
     def setUp(self) -> None:
         data1 = """
