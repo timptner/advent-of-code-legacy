@@ -164,26 +164,6 @@ Distance:  9  40  200
         self.assertEqual(answer, 71503)
 
 
-class TestDay07(TestCase):
-    def setUp(self) -> None:
-        data = """
-32T3K 765
-T55J5 684
-KK677 28
-KTJJT 220
-QQQJA 483
-"""
-        self.data = data.strip()
-
-    def test_first_part(self) -> None:
-        value = day07.first_part(self.data)
-        self.assertEqual(value, 6440)
-
-    def test_second_part(self) -> None:
-        value = day07.second_part(self.data)
-        self.assertEqual(value, 5905)
-
-
 class TestDay10(TestCase):
     def setUp(self) -> None:
         data1 = """

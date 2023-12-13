@@ -1,5 +1,7 @@
 from enum import Enum
 
+from utilities.backend import BasePuzzle
+
 
 def card_to_hex(letter: str) -> str:
     letters = {
@@ -125,11 +127,28 @@ def sort_data(data: str, use_jokers: bool = False) -> int:
     return total
 
 
-def first_part(data: str) -> int:
-    value = sort_data(data)
-    return value
+class Puzzle(BasePuzzle):
+    year = 2023
+    day = 7
+    name = "Camel Cards"
 
+    def part1(self, text: str) -> int:
+        value = sort_data(text)
+        return value
 
-def second_part(data: str) -> int:
-    value = sort_data(data, use_jokers=True)
-    return value
+    def part2(self, text: str) -> int:
+        value = sort_data(text, use_jokers=True)
+        return value
+
+    def update_test_data(self) -> None:
+        text = """
+        32T3K 765
+        T55J5 684
+        KK677 28
+        KTJJT 220
+        QQQJA 483
+        """
+        self.test_data = {
+            'part1': (text, 6440),
+            'part2': (text, 5905),
+        }
