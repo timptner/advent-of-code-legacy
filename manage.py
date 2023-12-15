@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import logging
 import unittest
 
 from argparse import ArgumentParser
@@ -9,6 +10,9 @@ from pathlib import Path
 
 from utilities.console import console
 from utilities.storage import load_dotenv
+
+
+logging.basicConfig(format="%(message)s")
 
 
 def test(year: int, day: int, part: int) -> unittest.TestResult:
@@ -30,19 +34,20 @@ def test(year: int, day: int, part: int) -> unittest.TestResult:
 
 
 def solve(args) -> None:
-    module_path: Path = args.module
-    if not module_path.exists():
-        raise FileNotFoundError("Module with puzzle solution does not exist")
-
-    module_name = str(module_path).removesuffix('.py').replace('/', '.')
+    name = args.module
 
     try:
-        module = import_module(module_name)
+        module = import_module(name)
     except ModuleNotFoundError:
-        print("Solution for this puzzle is missing")
-        return
+        logging.error(f"Module '{name}' does not exist")
+        exit(1)
 
-    puzzle = module.Puzzle()
+    try:
+        puzzle = module.Puzzle()
+    except AttributeError:
+        logging.error(f"Module '{name}' does not contain a puzzle solution")
+        exit(1)
+
     puzzle.solve()
 
 
@@ -67,16 +72,32 @@ def test_all(args) -> None:
             console.print(f"{year}\t{day:>3}\t{parts[0]}\t{parts[1]}")
 
 
-def main() -> None:
-    load_dotenv()
+def get_default_module() -> str:
     today = date.today()
 
+    year = today.year
+    month = today.month
+    day = today.day
+
+    if month == 12 and day < 26:
+        module = f'year{year}.day{day}'
+    elif month == 12:
+        module = f'year{year}.day25'
+    else:
+        module = f'year{year - 1}.day25'
+    return module
+
+
+def read_arguments() -> None:
     parser = ArgumentParser()
 
     subparsers = parser.add_subparsers(title="Available commands")
 
+    parser_login = subparsers.add_parser('login', help="Log in to Advent of Code")
+    parser_login.set_defaults(func=login)
+
     parser_solve = subparsers.add_parser('solve', help="Solve specific puzzle")
-    parser_solve.add_argument('module', type=Path, default=f'year{today.year}/day{today.day:02d}.py', help="Path to module containing puzzle")
+    parser_solve.add_argument('--module', default=get_default_module(), help="Module containing puzzle solver")
     parser_solve.set_defaults(func=solve)
 
     parser_test = subparsers.add_parser('test', help="Test all available puzzle")
@@ -84,6 +105,11 @@ def main() -> None:
 
     args = parser.parse_args()
     args.func(args)
+
+
+def main() -> None:
+    load_dotenv()
+    read_arguments()
 
 
 if __name__ == '__main__':
