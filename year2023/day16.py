@@ -1,6 +1,7 @@
 import sys
 
 from enum import Enum
+from typing import TypeAlias
 
 from utilities.backend import BasePuzzle
 from utilities.models import Grid
@@ -15,7 +16,7 @@ class Direction(Enum):
     WEST = 3
 
 
-Point = tuple[int, int]
+Point: TypeAlias = tuple[int, int]
 
 
 class Layout(Grid):
@@ -188,7 +189,8 @@ class Puzzle(BasePuzzle):
 
         return max(results.values())
 
-    def update_test_data(self) -> None:
+    @property
+    def test_data(self) -> dict:
         text = r"""
         .|...\....
         |.-.\.....
@@ -201,7 +203,8 @@ class Puzzle(BasePuzzle):
         .|....-|.\
         ..//.|....
         """
-        self.test_data = {
+
+        return {
             'part1': (text, 46),
             'part2': (text, 51),
         }
