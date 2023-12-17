@@ -1,3 +1,4 @@
+import logging
 import os
 
 from pathlib import Path
@@ -6,6 +7,8 @@ from urllib.parse import urljoin
 import requests
 
 from utilities.decorators import cache, rate_limit, measure_time
+
+logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).parent.parent
 
@@ -24,7 +27,7 @@ def get_puzzle_input(*, year: int, day: int) -> str:
     if response.status_code != 200:
         raise Exception(f"[{response.status_code}] {response.content}")
 
-    print("Retrieved puzzle input from backend")
+    logger.info("Retrieved puzzle input from backend")
     return response.content.decode('utf-8')
 
 
@@ -70,21 +73,25 @@ class BasePuzzle:
     def _test_part(self, part: int) -> None:
         text, value = self.test_data[f'part{part}']
         func = getattr(self, f'part{part}')
-        assert func(text) == value, f"Test for part {part} failed"
-        print(f"Test for part {part} passed")
+        answer = func(text)
+        assert answer == value, f"Test for part {part} [red]failed[/red] ({answer} != {value})"
+        logger.info(f"Test for part {part} [green]passed")
 
     def _solve_part(self, part: int) -> None:
         text = self.input_data
         func = getattr(self, f'part{part}')
         func = measure_time(func)
         value = func(text)
-        print(f"Solution for part {part}: {value}")
+        logger.info(f"Solution for part {part}: {value}")
 
     def solve(self) -> None:
         padding = '-' * 10
-        print(f"{padding} {self.name} ({self.year}/{self.day}) {padding}")
+        logger.info(f"{padding} {self.name} ({self.year}/{self.day}) {padding}")
+
+        logger.info("--- Part 1")
         self._test_part(1)
         self._solve_part(1)
 
+        logger.info("--- Part 2")
         self._test_part(2)
         self._solve_part(2)

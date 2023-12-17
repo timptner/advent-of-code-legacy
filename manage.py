@@ -8,11 +8,22 @@ from datetime import date
 from importlib import import_module
 from pathlib import Path
 
+from rich.logging import RichHandler
+
 from utilities.console import console
 from utilities.storage import load_dotenv
 
+logger = logging.getLogger('root')
+logger.addHandler(RichHandler(
+    markup=True,
+    show_time=False,
+    show_level=False,
+))
+logger.setLevel(logging.DEBUG)
 
-logging.basicConfig(format="%(message)s")
+
+def login(args) -> None:
+    raise NotImplementedError("WIP")
 
 
 def test(year: int, day: int, part: int) -> unittest.TestResult:
@@ -35,17 +46,18 @@ def test(year: int, day: int, part: int) -> unittest.TestResult:
 
 def solve(args) -> None:
     name = args.module
+    logger.info(f"Trying to load module '{name}'")
 
     try:
         module = import_module(name)
     except ModuleNotFoundError:
-        logging.error(f"Module '{name}' does not exist")
+        logger.error("[red]Module does not exist")
         exit(1)
 
     try:
         puzzle = module.Puzzle()
     except AttributeError:
-        logging.error(f"Module '{name}' does not contain a puzzle solution")
+        logger.error("[red]Module does not contain a puzzle solution")
         exit(1)
 
     puzzle.solve()
