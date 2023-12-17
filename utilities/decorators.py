@@ -1,39 +1,19 @@
-import logging
 import time
 
 from functools import wraps, partial, update_wrapper
 
-from utilities.console import console
 from utilities.storage import BASE_DIR
-
-logger = logging.getLogger(__name__)
-
-
-def _get_human_delta(delta: int) -> str:
-    """Convert time delta (in ns) to human readable unit."""
-    digits = len(str(delta))
-    if digits < 4:
-        msg = f"{delta} ns"
-    elif digits < 7:
-        msg = f"{delta * 1e-3:.1f} µs"
-    elif digits < 10:
-        msg = f"{delta * 1e-6:.1f} ms"
-    else:
-        msg = f"{delta * 1e-9:.1f} s"
-    return msg
 
 
 def measure_time(func):
-    """Print the runtime of the decorated function."""
+    """Measure the runtime of a function."""
     @wraps(func)
     def wrapper(*args, **kwargs):
         start = time.perf_counter_ns()
         value = func(*args, **kwargs)
         stop = time.perf_counter_ns()
         delta = stop - start
-        human_delta = _get_human_delta(delta)
-        logger.info(f"Finished '{func.__name__}' in {human_delta}")
-        return value
+        return value, delta
 
     return wrapper
 

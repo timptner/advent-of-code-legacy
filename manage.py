@@ -60,7 +60,8 @@ def solve(args) -> None:
         logger.error("[red]Module does not contain a puzzle solution")
         exit(1)
 
-    puzzle.solve()
+    puzzle.solve(part=1)
+    puzzle.solve(part=2)
 
 
 def test_all(args) -> None:
