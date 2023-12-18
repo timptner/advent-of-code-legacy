@@ -81,7 +81,8 @@ class Puzzle(BasePuzzle):
     day = 18
     name = "Lavaduct Lagoon"
 
-    def update_test_data(self) -> None:
+    @property
+    def test_data(self) -> dict:
         text = """
         R 6 (#70c710)
         D 5 (#0dc571)
@@ -98,7 +99,7 @@ class Puzzle(BasePuzzle):
         L 2 (#015232)
         U 2 (#7a21e3)
         """
-        self.test_data = {
+        return {
             'part1': (text, 62),
             'part2': (text, 952408144115),
         }
@@ -110,51 +111,10 @@ class Puzzle(BasePuzzle):
             instruction = Instruction(direction, int(distance))
             instructions.append(instruction)
 
-        turns = []
-        for index in range(-1, len(instructions) - 1):
-            direction = instructions[index].direction
-            next_direction = instructions[index + 1].direction
-            turn = DIRECTION_TO_TURN[direction, next_direction]
-            turns.append(turn)
+        points = self.get_points(instructions)
+        area = self.calculate_area(points)
 
-        turn = turns.pop(0)
-        point = Point(0, 0, turn)
-        points = [point]
-        for instruction in instructions[:-1]:
-            x, y = instruction.next_coordinate(point.x, point.y)
-            turn = turns.pop(0)
-            last_point = points[-1]
-            if last_point.turn == Turn.RIGHT and turn == Turn.RIGHT:
-                x, y = instruction.direction.move(x, y)
-            elif last_point.turn == Turn.LEFT and turn == Turn.LEFT:
-                x, y = OPPOSITE_DIRECTIONS[instruction.direction].move(x, y)
-            else:
-                pass
-            point = Point(x, y, turn)
-            points.append(point)
-
-        x, y = zip(*[(point.x, point.y) for point in points])
-        offset_x = abs(min(x)) if min(x) < 0 else 0
-        offset_y = abs(min(y)) if min(y) < 0 else 0
-        for point in points:
-            point.x += offset_x
-            point.y += offset_y
-
-        area = 0
-        for index in range(1, len(points)):
-            last_point = points[index - 1]
-            point = points[index]
-            if last_point.x == point.x:
-                continue
-            if last_point.x < point.x:
-                area += last_point.y * (point.x - last_point.x)
-            else:
-                area -= last_point.y * (last_point.x - point.x)
-            pass
-
-        fig, ax = plt.subplots(figsize=(8, 8))
-        ax.fill(x, y)
-        fig.savefig(IMAGE_DIR / 'part1.png')
+        self.save_as_plot(points, 'part1.png')
 
         return area
 
@@ -169,6 +129,15 @@ class Puzzle(BasePuzzle):
             instruction = Instruction(direction, distance)
             instructions.append(instruction)
 
+        points = self.get_points(instructions)
+        area = self.calculate_area(points)
+
+        self.save_as_plot(points, 'part2.png')
+
+        return area
+
+    @staticmethod
+    def get_points(instructions: list[Instruction]) -> list[Point]:
         turns = []
         for index in range(-1, len(instructions) - 1):
             direction = instructions[index].direction
@@ -199,6 +168,10 @@ class Puzzle(BasePuzzle):
             point.x += offset_x
             point.y += offset_y
 
+        return points
+
+    @staticmethod
+    def calculate_area(points: list[Point]) -> int:
         area = 0
         for index in range(1, len(points)):
             last_point = points[index - 1]
@@ -211,8 +184,11 @@ class Puzzle(BasePuzzle):
                 area -= last_point.y * (last_point.x - point.x)
             pass
 
-        fig, ax = plt.subplots(figsize=(8, 8))
-        ax.fill(x, y)
-        fig.savefig(IMAGE_DIR / 'part2.png')
-
         return area
+
+    @staticmethod
+    def save_as_plot(points: list[Point], name: str):
+        fig, ax = plt.subplots(figsize=(8, 8))
+        x, y = zip(*[(point.x, point.y) for point in points])
+        ax.fill(x, y)
+        fig.savefig(IMAGE_DIR / name)
