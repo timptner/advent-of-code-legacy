@@ -1,3 +1,5 @@
+import math
+
 from enum import Enum
 
 from utilities.backend import BasePuzzle
@@ -67,33 +69,69 @@ class Workflow:
         return self.rules[-1]
 
 
-class Sorter:
-    def __init__(self, workflows: list[str]) -> None:
-        self.workflows = {}
-        self.conditions = []
-        self.collection = {'A': [], 'R': []}
-        for workflow in workflows:
-            name, rules = workflow[:-1].split('{')
-            rules = [rule.split(':') for rule in rules.split(',')]
-            self.workflows[name] = rules
-
-    def get_next_workflow(self, name: str, conditions: tuple[str] = ()) -> None:
-        rules = self.workflows[name]
-        for rule in rules:
-            if len(rule) == 1:
-                condition = None
-                next_name = rule[0]
-            else:
-                condition, next_name = rule
-
+def make_rules_independent(workflows: dict) -> dict:
+    improved_workflows = {}
+    for name, rules in workflows.items():
+        next_names, conditions = zip(*rules)
+        new_rules = []
+        for index, next_name in enumerate(next_names):
+            new_conditions = []
+            condition = conditions[index]
             if condition:
-                conditions = (*conditions, condition)
+                new_conditions.append(condition)
+            for condition in conditions[:index]:
+                if '>' in condition:
+                    condition = condition.replace('>', '<=')
+                else:
+                    condition = condition.replace('<', '>=')
+                new_conditions.append(condition)
+            rule = next_name, new_conditions
+            new_rules.append(rule)
+        improved_workflows[name] = new_rules
+    return improved_workflows
 
+
+def parse_data(text: str) -> tuple[dict, list]:
+    groups = text.split('\n\n')
+
+    workflows = {}
+    for workflow in groups[0].splitlines():
+        name, rules_str = workflow[:-1].split('{')
+        rules = []
+        for rule in rules_str.split(','):
+            if ':' in rule:
+                condition, next_name = rule.split(':')
+            else:
+                condition = None
+                next_name = rule
+            rules.append((next_name, condition))
+        workflows[name] = rules
+
+    workflows = make_rules_independent(workflows)
+
+    parts = []
+    for part in groups[1].splitlines():
+        part = {key: int(value) for key, value in [category.split('=') for category in part[1:-1].split(',')]}
+        parts.append(part)
+
+    return workflows, parts
+
+
+class Tree:
+    def __init__(self, workflows: dict) -> None:
+        self.workflows = workflows
+        self.accepted = []
+
+    def build(self, name: str, previous_conditions: list) -> None:
+        rules = self.workflows[name]
+        for next_name, conditions in rules:
+            next_conditions = previous_conditions + conditions
             if next_name in ['A', 'R']:
-                self.collection[next_name].append(conditions)
-                return
+                if next_name == 'A':
+                    self.accepted.append(next_conditions)
+                continue
 
-            self.get_next_workflow(next_name, conditions)
+            self.build(next_name, next_conditions)
 
 
 class Puzzle(BasePuzzle):
@@ -154,7 +192,49 @@ class Puzzle(BasePuzzle):
         return total
 
     def part2(self, text: str) -> int:
-        lines, _ = text.split('\n\n')
-        sorter = Sorter(lines.splitlines())
-        sorter.get_next_workflow('in')
-        pass
+        workflows, parts = parse_data(text)
+        tree = Tree(workflows)
+        tree.build('in', [])
+        total = 0
+        for conditions in tree.accepted:
+            rating = {
+                'x': (1, 4000),
+                'm': (1, 4000),
+                'a': (1, 4000),
+                's': (1, 4000),
+            }
+            for condition in conditions:
+                if '=' in condition:
+                    if '>=' in condition:
+                        category, value = condition.split('>=')
+                        value = int(value)
+                        start, end = rating[category]
+                        if start < value:
+                            start = value
+                        rating[category] = start, end
+                    else:
+                        category, value = condition.split('<=')
+                        value = int(value)
+                        start, end = rating[category]
+                        if end > value:
+                            end = value
+                        rating[category] = start, end
+                else:
+                    if '>' in condition:
+                        category, value = condition.split('>')
+                        value = int(value)
+                        start, end = rating[category]
+                        if start <= value:
+                            start = value + 1
+                        rating[category] = start, end
+                    else:
+                        category, value = condition.split('<')
+                        value = int(value)
+                        start, end = rating[category]
+                        if end >= value:
+                            end = value - 1
+                        rating[category] = start, end
+
+            rating = {key: end + 1 - start for key, (start, end) in rating.items()}
+            total += math.prod(rating.values())
+        return total
