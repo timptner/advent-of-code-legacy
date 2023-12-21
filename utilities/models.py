@@ -1,9 +1,9 @@
 class Grid:
     Point = tuple[int, int]
 
-    data = {}
-
     def __init__(self, text: str,) -> None:
+        self.data = {}
+
         lines = text.splitlines()
         for row, line in enumerate(lines):
             for column, character in enumerate(list(line)):
