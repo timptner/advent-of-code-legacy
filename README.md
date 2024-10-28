@@ -1,3 +1,5 @@
+> I have rewritten all my solutions in Rust. You can find them at [timptner/advent-of-code](https://github.com/timptner/advent-of-code).
+
 # Advent of Code
 
 This repository contains my solutions to the puzzles of [Advent of Code](https://adventofcode.com).
